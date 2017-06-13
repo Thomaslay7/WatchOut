@@ -20,11 +20,11 @@ public class ExitButton : MonoBehaviour {
 	}
 	void dialog()
 	{
-		if (UnityEditor.EditorUtility.DisplayDialog ("Konfirmasi", "Apakah Anda Yakin Ingin Keluar ? ", "Ya", "Tidak")) {
-			Application.Quit();
+		
 			Debug.Log("Sprite Clicked");
 			audio.Play ();
-			Invoke("changescene", 1f);
-		}
+        Application.Quit();
+        Invoke("changescene", 1f);
+		
 	}
 }

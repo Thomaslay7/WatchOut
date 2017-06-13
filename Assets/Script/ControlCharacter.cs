@@ -3,52 +3,61 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ControlCharacter : MonoBehaviour {
-   [System.Serializable]
 
-    public class CAnimationClips
-    {
-        public AnimationClip Clips;
-        public WrapMode Wrap;
-        public KeyCode PressedKey;
-    }
+    
+    CapsuleCollider collider;
+    float startColliderHeight = 0;
 
-    public GameObject Character;
-    public AnimationClip Idle;
+    Animator anim;
+    public GameObject Character;  
     public KeyCode Jump = KeyCode.UpArrow;
     public KeyCode Jongkok = KeyCode.DownArrow;
 
-    public CAnimationClips lompat;
-    public CAnimationClips jongkok;
-    public CAnimationClips berdiri;
-
-    public float Speed = 1;
+    public float Speed = 6;
     int charStatus ;
     Vector3 MoveDirection;
     CharacterController myController;
 
 	// Use this for initialization
 	void Start () {
-		
-	}
+        Character.GetComponent<Animator>();
+        collider = GetComponent<CapsuleCollider>();
+        anim=GetComponent<Animator>();
+    
+    }
 	
 	// Update is called once per frame
 	void Update () {
         charStatus = 0;
         MoveDirection = Vector3.zero;
+        float centerY = collider.height / 6;
 
-        if(Input.GetKey(lompat.PressedKey) ||   Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow))
         {
             charStatus = 1;
 
-            Character.GetComponent<Animation>().wrapMode = lompat.Wrap;
-            Character.GetComponent<Animation>().CrossFade(lompat.Clips.name);
+            collider.height = 3.6f;
+            collider.center = new Vector3(-1.21f, 3f, 0f);
+            Character.GetComponent<Animator>().SetBool("isJump", true);
+            Debug.Log("lompat");
         }
-        if(Input.GetKey(jongkok.PressedKey) || Input.GetKey(jongkok.PressedKey))
+        else
+        {
+
+            Character.GetComponent<Animator>().SetBool("isIdle", true);
+
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
         {
             charStatus = 2;
+            Character.GetComponent<Animator>().SetBool("isNunduk", true);
 
-            Character.GetComponent<Animation>().wrapMode = jongkok.Wrap;
-            Character.GetComponent<Animation>().CrossFade(jongkok.Clips.name);
+            collider.height = 4.22f;
+            collider.center = new Vector3(-1.21f, -2.3f, 0.0f);
+        }
+        else
+        {
+            Character.GetComponent<Animator>().SetBool("isIdle", false);
         }
         if (charStatus == 1)
         {
@@ -56,19 +65,29 @@ public class ControlCharacter : MonoBehaviour {
 
             if (Input.GetKey(Jump))
             {
+                
                 MoveDirection = Vector3.up * Speed;
-            }
-            else if (Input.GetKey(Jongkok))
-            {
-                MoveDirection = Vector3.down * Speed;
+                collider.height = 4.53f;
+                collider.center = new Vector3(-1.21f, 0.8f, 0f);
+
             }
 
-           
         }
-        if (charStatus == 0)
+        else if (charStatus == 2)
         {
-            Character.GetComponent<Animation>().wrapMode = WrapMode.Loop;
-            Character.GetComponent<Animation>().CrossFade(berdiri.Clips.name);
+            if (Input.GetKey(Jongkok))
+            {
+                MoveDirection = Vector3.down * Speed;
+               
+                collider.height = 4.22f;
+                collider.center = new Vector3(-1.21f, -2.3f, 0.0f);
+            }
+        }
+           
+        else if(charStatus == 0)
+        {
+            Character.GetComponent<Animator>().SetBool("isIdle", true);
+            collider.center = new Vector3(-1.21f, -1.109641f, collider.center.z);
 
         }
 
